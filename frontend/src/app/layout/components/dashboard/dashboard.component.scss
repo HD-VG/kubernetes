@@ -1,0 +1,12 @@
+.grid {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    height: 100vh;           /* Ocupa el 100% de la altura de la ventana */
+}
+
+.logo-image {
+    max-width: 100%;         /* Se ajusta al tamaño del contenedor manteniendo la proporción */
+    max-height: 100%;        /* Se ajusta al tamaño del contenedor manteniendo la proporción */
+    object-fit: contain;     /* Ajusta la imagen para que se contenga en el contenedor */
+}

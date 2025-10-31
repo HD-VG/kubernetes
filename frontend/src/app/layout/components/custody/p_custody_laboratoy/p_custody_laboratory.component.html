@@ -1,0 +1,73 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="chainOfCustodys" [columns]="cols" [rows]="10"
+                [globalFilterFields]="['name', 'permisos']" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedChainOfCustodys" selectionMode="multiple" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between align-items-center">
+                        <h5>Laboratorio</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-custody>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="custody"></p-tableCheckbox>
+                        </td>
+                        <td>{{ custody.code_custody }}</td>
+                        <td>
+                            <i class="pi"
+                                [ngClass]="{'true-icon pi-check-circle text-green-500': custody.laboratoryMB, 'false-icon pi-times-circle text-pink-500': !custody.laboratoryMB}"></i>
+                            {{ custody.laboratoryMB ? 'Sí' : 'No' }}
+                        </td>
+                        <td>
+                            <i class="pi"
+                                [ngClass]="{'true-icon pi-check-circle text-green-500': custody.laboratoryFQ, 'false-icon pi-times-circle text-pink-500': !custody.laboratoryFQ}"></i>
+                            {{ custody.laboratoryFQ ? 'Sí' : 'No' }}
+                        </td>
+                        <td>{{ custody.code_thermohygrometer }}</td>
+                        <td>{{ custody.code_thermometer_m_m }}</td>
+                        <td>{{ custody.code_thermometer }}</td>
+                        <td>{{ custody.code_colorimeter }}</td>
+                        <td>{{ custody.initial_conservative }}</td>
+                        <td>{{ custody.createAt }}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-secondary mr-2"
+                                title="Laboratorio" *ngIf="canCreate" (click)="goToSamplingLaboratory(custody?.id)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'icono gota' : 'icono gota'}}.png"
+            alt="logo">
+        <span>Elapas</span>
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu"
+        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <!-- <button class="p-link layout-topbar-button" (click)="toggleCalendar()">
+            <i class="pi pi-calendar"></i>
+            <span>Calendar</span>
+        </button> -->
+        <p-dialog [(visible)]="showCalendar" modal="false" [style]="{width: '150px'}" [baseZIndex]="250"
+            (onHide)="onDialogClose()">
+            <ng-template pTemplate="header">
+                <span>Seleccionar Fecha</span>
+            </ng-template>
+
+            <p-calendar [(ngModel)]="selectedDate" [showIcon]="true" (onSelect)="onDateSelect()"></p-calendar>
+
+            <ng-template pTemplate="footer">
+                <button type="button" pButton label="Cerrar" icon="pi pi-times" (click)="closeCalendar()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-menu #profileMenu [popup]="true" [model]="items"></p-menu>
+        <button class="p-link layout-topbar-button" (click)="profileMenu.toggle($event)">
+            <i class="pi pi-user"></i>&nbsp;
+            <span>Perfil</span>
+        </button>
+    </div>
+</div>

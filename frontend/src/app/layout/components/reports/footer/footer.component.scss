@@ -1,0 +1,68 @@
+/* Estilos generales */
+.report-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0; /* Asegura que empiece desde el borde izquierdo */
+    right: 0; /* Asegura que termine en el borde derecho */
+    min-height: 30px;
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño */
+
+    .footer-left {
+        flex: 1;
+        text-align: left;
+
+        p {
+            margin: 0;
+            line-height: 1.2;
+        }
+    }
+
+    .footer-center {
+        flex: 2;
+        text-align: center;
+
+        p {
+            margin: 0;
+            line-height: 1.2;
+        }
+    }
+
+    .footer-right {
+        flex: 1;
+        text-align: right;
+
+        p {
+            margin: 0;
+            line-height: 1.2;
+        }
+    }
+}
+
+/* Estilos generales */
+.footer {
+    width: 100%;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px; /* Ajusta según necesidad */
+    background-color: white; /* Fondo blanco para el footer */
+    z-index: 999; /* Asegura que esté en la parte inferior */
+}
+
+/* Estilos para impresión */
+@media print {
+    .footer {
+        display: table-footer-group;
+    }
+}

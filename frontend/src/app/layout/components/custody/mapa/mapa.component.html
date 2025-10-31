@@ -1,0 +1,133 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card" style="height: 800px;">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Atras" icon="pi pi-arrow-circle-left" class="p-button-info mr-2"
+                            (click)="goToCustody()">
+                        </button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+            <!-- Contenedor del mapa -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+        <p-dialog [(visible)]="samplingMapsDialog" header="Resultados" [responsive]="true">
+            <div class="grid p-fluid mt-1">
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sampling_day" [(ngModel)]="sampling_day" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="sampling_day">Fecha</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sampling_time" [(ngModel)]="sampling_time" type="text" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="sampling_time">Hora</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sample_code" [(ngModel)]="sample_code" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="sample_code">Código Muestreo</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="description" [(ngModel)]="description" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="description">Descripcion</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="source_of_supply" [(ngModel)]="source_of_supply" type="text" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="source_of_supply">Fuente de Abastecimiento</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="quantity" [(ngModel)]="quantity" type="number" min="0" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="quantity">Cantidad</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sample_location" [(ngModel)]="sample_location" type="text" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="sample_location">Ubicacion de la Muestra</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sample_point" [(ngModel)]="sample_point" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="sample_point">Punto de Muestreo</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="coordinatesX" [(ngModel)]="coordinatesX" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="coordinatesX">Coordenada X</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="coordinatesY" [(ngModel)]="coordinatesY" type="text" pInputText [disabled]="true" autocomplete="off" />
+                        <label for="coordinatesY">Coordenada Y</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sampling_technique" [(ngModel)]="sampling_technique" type="text" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="sampling_technique">Técnica de Muestreo</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="sampling_technique_m" [(ngModel)]="sampling_technique_m" type="text" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="sampling_technique_m">T°C Muestreo</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="ci_res_a" [(ngModel)]="ci_res_a" type="number" min="0" step="0.1" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="ci_res_a">CI Res. (mg/L) A</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="ci_res_b" [(ngModel)]="ci_res_b" type="number" min="0" step="0.1" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="ci_res_b">CI Res. (mg/L) B</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="cond_amb_t" [(ngModel)]="cond_amb_t" type="number" min="0" step="0.1" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="cond_amb_t">Cond. Amb. T°C</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-4">
+                    <span class="p-float-label">
+                        <input id="cond_amb_h" [(ngModel)]="cond_amb_h" type="number" min="0" step="0.1" pInputText [disabled]="true"
+                            autocomplete="off" />
+                        <label for="cond_amb_h">Cond. Amb. H%</label>
+                    </span>
+                </div>
+            </div>
+            <p-footer>
+                <button type="button" pButton label="Cancel" icon="pi pi-times"
+                    (click)="samplingMapsDialog = false"></button>
+            </p-footer>
+        </p-dialog>
+    </div>
+</div>

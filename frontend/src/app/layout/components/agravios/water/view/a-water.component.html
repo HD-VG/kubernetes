@@ -1,0 +1,108 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Agregar" icon="pi pi-plus" class="p-button-success mr-2"
+                            *ngIf="canCreate" (click)="openNew()">
+                        </button>
+                        <button pButton pRipple label="Atras" icon="pi pi-arrow-circle-left"
+                            class="p-button-danger mr-2" (click)="router.navigate(['/dashboard'])">
+                        </button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="waters" [columns]="cols" [rows]="10" [globalFilterFields]="['name']"
+                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between align-items-center">
+                        <h5>Administración de Recurrencia</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText autocomplete="off" type="text" (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Buscar..." />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-water>
+                    <tr>
+                        <td>{{ water.name }}</td>
+                        <td>{{ water.basicCoste }}</td>
+                        <td>{{ water.height }}</td>
+                        <td>{{ water.cohefficientDischarge }}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                title="Editar" *ngIf="canEdit" (click)="editWater(water)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                title="Eliminar" *ngIf="canDelete" (click)="deleteWater(water)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="waterDialog" header="Tipo de Daño" [responsive]="true">
+            <div class="grid p-fluid mt-1">
+                <div class="p-field col-12 md:col-12">
+                    <span class="p-float-label">
+                        <input id="name" [(ngModel)]="water.name" type="text" pInputText autocomplete="off" />
+                        <label for="name">Nombre</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-12">
+                    <span class="p-float-label">
+                        <input id="basicCoste" [(ngModel)]="water.basicCoste" type="number" pInputText autocomplete="off" />
+                        <label for="basicCoste">Costo Basico</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-12">
+                    <span class="p-float-label">
+                        <input id="height" [(ngModel)]="water.height" type="number" pInputText autocomplete="off" />
+                        <label for="height">Altura</label>
+                    </span>
+                </div>
+                <div class="p-field col-12 md:col-12">
+                    <span class="p-float-label">
+                        <input id="cohefficientDischarge" [(ngModel)]="water.cohefficientDischarge" type="number" pInputText autocomplete="off" />
+                        <label for="cohefficientDischarge">Descarga coherente</label>
+                    </span>
+                </div>
+            </div>
+            <p-footer>
+                <button type="button" pButton label="Cancelar" icon="pi pi-times"
+                    (click)="waterDialog = false"></button>
+                <button type="button" pButton label="Guardar" icon="pi pi-check" (click)="saveWater()"></button>
+            </p-footer>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteWaterDialog" header="Confirmación" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="water">¿Está seguro de eliminar el registro <b>{{water.name}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteWaterDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si"
+                    (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

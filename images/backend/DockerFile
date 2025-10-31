@@ -1,0 +1,43 @@
+# ------------------ ETAPA DE CONSTRUCCIÓN (Builder Stage) ------------------
+FROM node:20-slim AS builder
+
+WORKDIR /usr/src/app
+
+# Copia los archivos de definición de dependencias del backend
+COPY backend/package*.json ./
+COPY backend/tsconfig*.json ./
+
+# Instala las dependencias
+RUN npm install
+
+# Copia todo el código fuente del backend, incluyendo 'src'
+COPY backend/ ./
+
+# --- Esta sección es para modo 'production', la mantendremos comentada si quieres 'start:dev' ---
+RUN npm run build 
+# -----------------------------------------------------------------------------------------------
+
+# ------------------ ETAPA FINAL (Development/Production Stage) ------------------
+FROM node:20-alpine
+
+# Instala herramientas necesarias para ciertos módulos nativos si los usas (e.g., node-gyp)
+RUN apk add --no-cache python3 g++ make
+
+WORKDIR /usr/src/app
+
+# Copia solo los archivos esenciales desde la etapa de construcción
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY --from=builder /usr/src/app/ ./
+# Copia todo el código, incluyendo 'src' y 'dist'
+
+# **IMPORTANTE:** Aquí se definen las variables que Kubernetes inyectará
+ENV PORT 3000
+ENV DB_HOST ""         
+ENV DB_PORT "5432" 
+ENV DB_USERNAME ""     
+ENV DB_PASSWORD ""     
+EXPOSE 3000
+
+# Comando para iniciar la aplicación en modo desarrollo (hot-reload)
+CMD ["npm", "run", "start:dev"]

@@ -1,0 +1,138 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Agregar" icon="pi pi-plus" class="p-button-success mr-2"
+                            *ngIf="canCreate" [disabled]="isCreateDisabled" (click)="openNew()">
+                        </button>
+                        <button pButton pRipple label="Atras" icon="pi pi-arrow-circle-left"
+                            class="p-button-danger mr-2" (click)="goCustodies()">
+                        </button>
+                        <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" *ngIf="canDelete"
+                            (click)="deleteSelectedApplicants()" [disabled]="!selectedApplicants || !selectedApplicants.length">
+                        </button> -->
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="applicants" [columns]="cols" [rows]="10" [globalFilterFields]="['name', 'permisos']"
+                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedApplicants" selectionMode="multiple" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between align-items-center">
+                        <h5>Solicitante</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText autocomplete="off" type="text" (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-applicant>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="applicant"></p-tableCheckbox>
+                        </td>
+                        <td>{{ applicant.entity_name }}</td>
+                        <td>{{ applicant.location }}</td>
+                        <td>{{ applicant.reference_person }}</td>
+                        <td>{{ applicant.phone }}</td>
+                        <td>{{ applicant.createAt }}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                title="Editar" title="Modificar" *ngIf="canEdit"
+                                (click)="editApplicant(applicant)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                title="Eliminar" title="Eliminar" *ngIf="canDelete"
+                                (click)="deleteApplicant(applicant)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="applicantDialog" header="Solicitante" [responsive]="true">
+            <div class="grid p-fluid mt-1" style="row-gap: 30px;">
+                <div class="p-field col-8 md:col-6">
+                    <span class="p-float-label">
+                        <input id="entity_name" [(ngModel)]="applicant.entity_name" type="text" pInputText
+                            autocomplete="off" readonly />
+                        <label for="entity_name">Nombre de la Entidad</label>
+                    </span>
+                </div>
+                <div class="p-field col-8 md:col-6">
+                    <span class="p-float-label">
+                        <input id="location" [(ngModel)]="applicant.location" type="text" pInputText
+                            autocomplete="off" />
+                        <label for="location">Direccion</label>
+                    </span>
+                </div>
+                <div class="p-field col-8 md:col-6">
+                    <span class="p-float-label">
+                        <input id="reference_person" [(ngModel)]="applicant.reference_person"
+                            type="text" pInputText autocomplete="off" />
+                        <label for="reference_person">Nombre de Referencia</label>
+                    </span>
+                </div>
+                <div class="p-field col-8 md:col-6">
+                    <span class="p-float-label">
+                        <input id="phone" [(ngModel)]="applicant.phone" type="text" pInputText
+                            autocomplete="off" />
+                        <label for="phone">Telefono</label>
+                    </span>
+                </div>
+            </div>
+            <p-footer>
+                <button type="button" pButton label="Cancelar" icon="pi pi-times"
+                    (click)="applicantDialog = false"></button>
+                <button type="button" pButton label="Guardar" icon="pi pi-check" (click)="saveApplicant()"></button>
+            </p-footer>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteApplicantDialog" header="Confirmación" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="applicant">Esta seguro de eliminar el registro
+                    <b>{{applicant.location}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteApplicantDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si"
+                    (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteApplicantsDialog" header="Confirmación" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Esta seguro de eliminar estos registros?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteApplicantsDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si"
+                    (click)="confirmDeleteSelected()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

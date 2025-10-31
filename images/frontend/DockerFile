@@ -1,0 +1,51 @@
+# ------------------ ETAPA DE CONSTRUCCIÓN (Builder Stage) ------------------
+# Usa una imagen base con Node y NPM para compilar la aplicación.
+FROM node:20-slim AS frontend-builder
+
+WORKDIR /usr/src/app
+
+# Copia los archivos de definición de dependencias del frontend
+# Esto permite que Docker cachee el paso de 'npm install' si solo cambian los archivos de código fuente.
+COPY frontend/package*.json ./
+# Copia el resto de los archivos (incluyendo 'src' y 'angular.json')
+COPY frontend/ ./
+
+# Instala dependencias y compila la aplicación Angular para producción
+# Asume que la carpeta de salida es 'dist' (si no especificas un nombre de proyecto en el 'build')
+RUN npm install
+RUN npm run build -- --output-path=./dist --configuration=production
+
+# ------------------ ETAPA FINAL (Nginx Stage) ------------------
+# Usa una imagen base ligera de Nginx para servir los archivos estáticos.
+FROM nginx:alpine
+
+# **CONFIGURACIÓN CRÍTICA DEL FRONTEND:**
+
+# 1. Copia el archivo de configuración de Nginx (manejo del enrutamiento de Angular)
+#    La ruta es /etc/nginx/conf.d/default.conf, que es la ubicación estándar de Nginx Alpine.
+COPY images/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+# 2. **Script de Inyección de Variables (entrypoint.sh)**
+#    Copiamos el script y lo ubicamos en la ruta estándar de scripts de entrada de Docker.
+#    Copiamos el script DE TU RUTA LOCAL (images/frontend/) A LA RUTA DEL CONTENEDOR (/docker-entrypoint.sh).
+COPY images/frontend/entrypoint.sh /docker-entrypoint.sh
+# Hacemos el script ejecutable. ¡Necesario!
+RUN chmod +x /docker-entrypoint.sh
+
+# 3. Copia los archivos estáticos compilados
+#    Copiamos los archivos compilados de la etapa anterior.
+#    ATENCIÓN: He eliminado el '*' al final de la ruta '/usr/src/app/dist/*' por seguridad, 
+#    asumiendo que 'dist' contiene directamente el contenido del build (index.html, assets, main.js, etc.).
+COPY --from=frontend-builder /usr/src/app/dist /usr/share/nginx/html
+
+# Puerto por defecto de Nginx
+EXPOSE 80
+
+# Usamos el script como el único punto de entrada (ENTRYPOINT)
+# Esto asegura que el script se ejecute primero para inyectar la URL correcta del Backend.
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# El CMD ahora sólo define el comando final que el script ejecutará (si no se especifica)
+# Como el script ya tiene 'exec nginx -g "daemon off;"', esta línea es redundante,
+# pero se mantiene por convención si el ENTRYPOINT necesitara cambiar.
+CMD ["nginx", "-g", "daemon off;"]

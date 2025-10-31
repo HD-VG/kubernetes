@@ -1,0 +1,23 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Imprimir" icon="pi pi-print"
+                            class="p-button-rounded p-button-info" (click)="printReport()"></button>
+                        <button pButton pRipple label="Atras" icon="pi pi-arrow-circle-left"
+                            class="p-button-rounded p-button-danger mr-2" (click)="goCustodies()">
+                        </button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+        </div>
+        <div id="printable-area">
+            <app-report-head></app-report-head>
+            <p>Reporte General</p>
+            <app-report-footer></app-report-footer>
+        </div>
+    </div>
+</div>

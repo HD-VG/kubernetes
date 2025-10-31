@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: tu-repo/frontend-app:latest 
+        ports:
+        - containerPort: 80
+        env:
+          # Inyecta la URL del Backend. Esta es leída por el entrypoint.sh (B)
+          - name: FRONTEND_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: application-config
+                key: FRONTEND_API_URL

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: tu-repo/backend-app:latest 
+        ports:
+        - containerPort: 3000
+        
+        # Inyección de Variables
+        env:
+          # DB_HOST: Usamos el nombre del Service de Postgres
+          - name: DB_HOST
+            value: "postgres-service" 
+
+          # 1. Inyecta todas las claves no sensibles de golpe (envFrom)
+          envFrom:
+          - configMapRef:
+              name: application-config
+              
+          # 2. Inyección de credenciales sensibles (DB, JWT)
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: application-secret
+                key: DB_USERNAME
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: application-secret
+                key: DB_PASSWORD
+          - name: DB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: application-secret
+                key: DB_DATABASE
+          - name: JWT_SEED
+            valueFrom:
+              secretKeyRef:
+                name: application-secret
+                key: JWT_SEED
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: application-secret
+                key: SECRET_KEY

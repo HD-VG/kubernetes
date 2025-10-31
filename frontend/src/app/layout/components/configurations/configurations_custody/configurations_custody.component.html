@@ -1,0 +1,128 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Agregar" icon="pi pi-plus" class="p-button-success mr-2"
+                            *ngIf="canCreate" (click)="openNew()">
+                        </button>
+                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                            *ngIf="canDelete" (click)="deleteSelectedRoles()"
+                            [disabled]="!selectedConfigurationCustodies || !selectedConfigurationCustodies.length">
+                        </button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="configurationCustodies" [columns]="cols" [rows]="10"
+                [globalFilterFields]="['code_configuration', 'message_configuration', 'version_configuration']"
+                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedConfigurationCustodies" selectionMode="multiple" responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between align-items-center">
+                        <h5>Configuraciones</h5>
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Search..." />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-configurationCustody>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="configurationCustody"></p-tableCheckbox>
+                        </td>
+                        <td>{{ configurationCustody.code_configuration }}</td>
+                        <td>{{ configurationCustody.message_configuration }}</td>
+                        <td>{{ configurationCustody.code_configuration }}</td>
+                        <td>
+                            <i class="pi"
+                                [ngClass]="{'true-icon pi-check-circle text-green-500': configurationCustody.status_configuration, 'false-icon pi-times-circle text-pink-500': !configurationCustody.status_configuration}"></i>
+                            {{ configurationCustody.status_configuration ? 'Sí' : 'No' }}
+                        </td>
+                        <td>{{ configurationCustody.createAt }}</td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                                title="Editar" *ngIf="canEdit" (click)="editConfigurationCustody(configurationCustody)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                title="Eliminar" *ngIf="canDelete" (click)="deleteConfigurationCustody(configurationCustody)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="configurationCustodyDialog" header="Role" [responsive]="true">
+            <div class="p-fluid">
+                <div class="p-field">
+                    <label for="code_configuration">Codigo de Configuracion</label>
+                    <input id="code_configuration" [(ngModel)]="configurationCustody.code_configuration" type="text"
+                        pInputText />
+                </div>
+                <div class="p-field">
+                    <label for="message_configuration">Mensaje de Configuracion</label>
+                    <input id="message_configuration" [(ngModel)]="configurationCustody.message_configuration"
+                        type="text" pInputText />
+                </div>
+                <div class="p-field">
+                    <label for="version_configuration">Version de la configuracion</label>
+                    <input id="version_configuration" [(ngModel)]="configurationCustody.version_configuration"
+                        type="text" pInputText />
+                </div>
+            </div>
+            <p-footer>
+                <button type="button" pButton label="Cancelar" icon="pi pi-times"
+                    (click)="configurationCustodyDialog = false"></button>
+                <button type="button" pButton label="Guardar" icon="pi pi-check" (click)="saveConfigurationCustodies()"></button>
+            </p-footer>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteConfigurationCustodieDialog" header="Confirm" [modal]="true"
+            [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="configurationCustody">Esta seguro de eliminar el registro
+                    <b>{{configurationCustody.code_configuration}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteConfigurationCustodieDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si"
+                    (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteConfigurationCustodiesDialog" header="Confirm" [modal]="true"
+            [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Esta seguro de eliminar estos registros?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteConfigurationCustodiesDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Si"
+                    (click)="confirmDeleteSelected()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

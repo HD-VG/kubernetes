@@ -1,0 +1,205 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <!-- <button pButton pRipple label="Imprimir" icon="pi pi-print"
+                            class="p-button-rounded p-button-info" (click)="printReport()"></button> -->
+                        <button pButton pRipple label="Imprimir Reporte" icon="pi pi-print"
+                            class="p-button-success mr-2" (click)="generatePdfBackend()"></button>
+                        <button pButton pRipple label="Atras" icon="pi pi-arrow-circle-left"
+                            class="p-button-danger mr-2" (click)="goCustodies()">
+                        </button>
+                        <!-- <button pButton pRipple label="Imprimir2" icon="pi pi-print"
+                            class="p-button-rounded p-button-info" (click)="generatePdf()"></button> -->
+                        <!-- <button pButton pRipple label="Imprimir3" icon="pi pi-print"
+                            class="p-button-rounded p-button-info" (click)="generatePdfBackend()"></button> -->
+                    </div>
+                </ng-template>
+            </p-toolbar>
+        </div>
+        <div id="printable-area">
+            <app-report-head></app-report-head>
+            <table border="1" width="1200px">
+                <tr>
+                    <th colspan="6">I. DATOS INICIALES</th>
+                    <th colspan="3">Registro N°</th>
+                </tr>
+                <tr>
+                    <td rowspan="2">Laboratorio destino (Marcar X)</td>
+                    <td>MB</td>
+                    <td>FQ</td>
+                    <td>Código Termohigrometro</td>
+                    <td>{{ data.code_thermohygrometer}}</td>
+                    <td>Código Termómetro</td>
+                    <td>{{ data.code_thermometer }}</td>
+                    <td rowspan="2">T°C° Inicial Conservador</td>
+                    <td rowspan="2">{{ data.initial_conservative }}</td>
+                </tr>
+                <tr>
+                    <td>{{ (data.laboratoryMB == true) ? "X" : "" }}</td>
+                    <td>{{ (data.laboratoryFQ == true) ? "X" : "" }}</td>
+                    <td>Código Termómetro Max/Min</td>
+                    <td>{{ data.code_thermometer_m_m }}</td>
+                    <td>Código Colorimetro</td>
+                    <td>{{ data.code_colorimeter }}</td>
+                </tr>
+            </table>
+            <table border="1" width="1200px">
+                <tr>
+                    <th colspan="15">II. TOMA DE MUESTRA</th>
+                    <th colspan="2">III. CONDICIONES DE RECEPCIÖN</th>
+                </tr>
+                <tr>
+                    <td rowspan="2">Cód. Muestra</td>
+                    <td rowspan="2">Descripcion y Muestra<br>(Tipo y Codigo)</td>
+                    <td rowspan="2">Fuente de Abastecimiento</td>
+                    <td rowspan="2">Cantidad <br>(ml/L)</td>
+                    <td rowspan="2">Sitio de Muestro</td>
+                    <td rowspan="2">Punto de Muestro</td>
+                    <td rowspan="2">Coord.<br>(GPS)</td>
+                    <td rowspan="2">Técnica Mustreo</td>
+                    <td rowspan="2">T°C muestra</td>
+                    <td colspan="2">CI Res. (mg/L)</td>
+                    <td colspan="2">Cond. Amb.</td>
+                    <td rowspan="2">Fecha</td>
+                    <td rowspan="2">Hora</td>
+                    <td rowspan="2">Condicion de Llegada</td>
+                    <td rowspan="2">Aceptacion</td>
+                </tr>
+                <tr>
+                    <td>A</td>
+                    <td>B</td>
+                    <td>T°C</td>
+                    <td>H%</td>
+                </tr>
+                <tr *ngFor="let sample of data.samplings">
+                    <td>{{ sample.sample_code }}</td>
+                    <td>{{ sample.description }}</td>
+                    <td>{{ sample.source_of_supply }}</td>
+                    <td>{{ sample.quantity }}</td>
+                    <td>{{ sample.sample_location }}</td>
+                    <td>{{ sample.sample_point }}</td>
+                    <td>{{ sample.coordinatesX }}<br>{{ sample.coordinatesY }}</td>
+                    <td>{{ sample.sampling_technique }}</td>
+                    <td>{{ sample.sampling_technique_m }}</td>
+                    <td>{{ sample.ci_res_a }}</td>
+                    <td>{{ sample.ci_res_b }}</td>
+                    <td>{{ sample.cond_amb_t }}</td>
+                    <td>{{ sample.cond_amb_h }}</td>
+                    <td>{{ formatDate(sample.sampling_day) }}</td>
+                    <td>{{ formatTime(sample.sampling_time) }}</td>
+                    <td>
+                        <ul>
+                          <li *ngFor="let condition of sample.sampling_conditions">
+                            {{ condition }}
+                          </li>
+                        </ul>
+                      </td>
+
+                    <td>{{ sample.sampling_aceptation }}</td>
+                </tr>
+            </table>
+            <table border="1" width="1200px">
+                <tr>
+                    <td>Responsable Muestreo:</td>
+                    <td>{{ data.transport.responsable }}</td>
+                    <td>Firma</td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td>Resp. Recepcion/Firma</td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+            </table>
+            <table border="1" width="1200px">
+                <tr>
+                    <th colspan="8">IV. TRANSPORTE</th>
+                </tr>
+                <tr>
+                    <th rowspan="2">Responsable</th>
+                    <th rowspan="2">Tramo Recorrido</th>
+                    <th rowspan="2">°T de llegada Conservador</th>
+                    <th rowspan="2">°T Max</th>
+                    <th colspan="2">Inicio Transporte</th>
+                    <th colspan="2">Llegada Laboratorio</th>
+                </tr>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+                <tr>
+                    <td>{{ data.transport.responsable }}</td>
+                    <td>{{ data.transport.distance_traveled }}</td>
+                    <td>{{ data.transport.conservative_arrival_stretch }}</td>
+                    <td>{{ data.transport.maximum_stretch }}</td>
+                    <td>{{ formatDate(data.transport.init_date.toString()) }}</td>
+                    <td>{{ formatTime(data.transport.init_time.toString()) }}</td>
+                    <td>{{ formatDate(data.transport.end_date.toString()) }}</td>
+                    <td>{{ formatTime(data.transport.end_time.toString()) }}</td>
+                </tr>
+            </table>
+            <table border="1" width="1200px">
+                <tr>
+                    <th colspan="7">V: PROCESO ANALITICO</th>
+                    <th colspan="6">VI: TRABAJO NO CONFORME (DURANTE TODA LA CADENA DE CUSTODIA)</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="6">Cumplimiento de procedimientos/registros</td>
+                    <td>Cod. Muestra</td>
+                    <td>Descripcion de TNC</td>
+                    <td>Análisis de Causas</td>
+                    <td>Corecciones</td>
+                    <td>Aceptación</td>
+                    <td>Resp.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="6">Cadena de Frio</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                    <td rowspan="2">&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>BLANCO DE VIAJERO</td>
+                    <td rowspan="2">Resultados</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>Aceptado</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>Rechazado</td>
+                </tr>
+                <tr>
+                    <td>BLANCO DE CAMPO</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>Aceptado</td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>Rechazado</td>
+                    <th colspan="6">VII. DESECHO</th>
+                </tr>
+                <tr>
+                    <td rowspan="2">Observaciones</td>
+                    <td rowspan="2" colspan="6"></td>
+                    <td>Fecha</td>
+                    <td></td>
+                    <td>Responsable</td>
+                    <td></td>
+                    <td>Tratamiento</td>
+                    <td>Quimico / Termico</td>
+                </tr>
+                <tr>
+                    <td>Observaciones</td>
+                    <td colspan="5"></td>
+                </tr>
+            </table>
+            <!-- <app-report-footer></app-report-footer> -->
+        </div>
+    </div>
+</div>

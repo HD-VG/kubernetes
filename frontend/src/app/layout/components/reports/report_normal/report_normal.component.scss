@@ -1,0 +1,63 @@
+/* Estilos generales */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th,
+td {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: left;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tbody {
+    display: table-row-group;
+}
+
+tr {
+    page-break-inside: avoid;
+}
+
+/* Estilos para impresión */
+@media print {
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    @page {
+        size: 13in 8.5in; /* Tamaño papel oficio en horizontal */
+        margin: 10mm; /* Márgenes ajustados */
+    }
+
+    body {
+        margin: 0; /* Sin márgenes adicionales en el body */
+    }
+
+    #printable-area {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .p-button {
+        display: none;
+    }
+
+    img {
+        max-width: 100%; /* Asegura que las imágenes no se desborden */
+        height: auto;
+    }
+
+    /* Asegurar que el contenido no se superponga con el header y footer */
+    .content {
+        margin-top: 60px; /* Ajustar según el tamaño del header */
+        margin-bottom: 60px; /* Ajustar según el tamaño del footer */
+    }
+}
